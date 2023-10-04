@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.company.appintegration.ApiClient.RetrofitClient;
 import com.company.appintegration.ApiClient.RetrofitClientHero;
 import com.company.appintegration.Models.GameModel;
-import com.company.appintegration.Models.ResponseModel;
 
 import java.util.List;
 

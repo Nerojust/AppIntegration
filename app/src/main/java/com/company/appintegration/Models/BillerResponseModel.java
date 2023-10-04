@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 
-public class ResponseModel {
+public class BillerResponseModel {
 
     @SerializedName("success")
     @Expose

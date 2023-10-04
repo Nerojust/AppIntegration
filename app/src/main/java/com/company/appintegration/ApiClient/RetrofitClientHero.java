@@ -14,10 +14,6 @@ public class RetrofitClientHero {
     private static final String CUSTOMER_DEMAND_BASE_URL = "https://simplifiedcoding.net/demos/";
 
    private static Retrofit getRetrofit(){
-
-
-
-
        HttpLoggingInterceptor myHttpInterceptor = new HttpLoggingInterceptor();
        myHttpInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 

@@ -1,15 +1,16 @@
 package com.company.appintegration.Views;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-
 import com.company.appintegration.Adapters.UserAdapter;
-import com.company.appintegration.Models.ResponseModel;
+import com.company.appintegration.Models.BillerResponseModel;
+import com.company.appintegration.Models.Resource;
 import com.company.appintegration.Models.Result;
 import com.company.appintegration.R;
 import com.company.appintegration.ViewModels.UserViewModel;
@@ -18,14 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    UserViewModel myUserViewModel;
-    UserAdapter myAdapter;
-
-    RecyclerView.LayoutManager myLayoutManager;
-
-    RecyclerView myRecyclerView;
-
+    private UserViewModel myUserViewModel;
+    private UserAdapter myAdapter;
+    private RecyclerView.LayoutManager myLayoutManager;
+    private RecyclerView myRecyclerView;
     private List<Result> myResponse = new ArrayList<>();
 
     @Override
@@ -33,65 +30,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        inItView();
-        inItModel();
-
+        initViews();
+        initSubscribers();
     }
 
 
-
-
-    private void inItView() {
-
+    private void initViews() {
         myRecyclerView = findViewById(R.id.recycler_view);
+        myRecyclerView.setHasFixedSize(true);
+        myLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        myRecyclerView.setLayoutManager(myLayoutManager);
 
         myUserViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
+        myUserViewModel.executeGetBillerList("2s");
     }
 
-    private void inItModel() {
+    private void initSubscribers() {
+        myUserViewModel.getMyResponseLivedata().observe(this, new Observer<Resource<BillerResponseModel>>() {
+            @Override
+            public void onChanged(Resource<BillerResponseModel> billerResponseModelResource) {
+                switch (billerResponseModelResource.status){
+                    case LOADING:
+                        //show loading here
+                        break;
+                    case SUCCESS:
+                        //dismiss loading here and in error block
+                        List<Result> billerList = null;
+                        if (billerResponseModelResource.data != null) {
+                            billerList = billerResponseModelResource.data.getResult();
+                        }
 
-     myUserViewModel.getMyResponseLivedata().observe(this, new Observer<ResponseModel>() {
-         @Override
-         public void onChanged(ResponseModel responseModel) {
+                        myAdapter = new UserAdapter(MainActivity.this, billerList);
+                        myRecyclerView.setAdapter(myAdapter);
+                        myAdapter.notifyDataSetChanged();
 
-             if(responseModel != null){
-
-                 List<Result> myResult = responseModel.getResult();
-                 myResponse.addAll(myResult);
-                 myAdapter.notifyDataSetChanged();
-
-                 String value = responseModel.getResult().toString();
-
-                myAdapter.setResults(responseModel.getResult());
-                myUserViewModel.getUserValue(value);
-
-             }
-         }
-     });
-        recyclerView();
-
+                        break;
+                    case ERROR:
+                        break;
+                }
+            }
+        });
     }
-
-    private void recyclerView() {
-
-
-        if(myAdapter == null){
-
-            myAdapter = new UserAdapter(this, myResponse);
-            myRecyclerView.setHasFixedSize(true);
-            myLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            myRecyclerView.setLayoutManager(myLayoutManager);
-            myRecyclerView.setAdapter(myAdapter);
-        }
-
-        else{
-            myAdapter.notifyDataSetChanged();
-        }
-
-
-
-
-    }
-
 }

@@ -17,7 +17,7 @@ public class Result {
     private String name;
     @SerializedName("description")
     @Expose
-    private Object description;
+    private String description;
     @SerializedName("categoryId")
     @Expose
     private String categoryId;
@@ -47,11 +47,11 @@ public class Result {
         this.name = name;
     }
 
-    public Object getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Object description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
